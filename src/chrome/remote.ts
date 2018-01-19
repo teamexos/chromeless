@@ -71,7 +71,11 @@ export default class RemoteChrome implements Chrome {
 
         this.channelId = channelId
 
-        this.TOPIC_NEW_SESSION = 'chrome/new-session'
+        let customSessionEnv = ''
+        if (process.env['CHROMELESS_SESSION_ENV']) {
+          customSessionEnv = process.env['CHROMELESS_SESSION_ENV'] + '/'
+        }
+        this.TOPIC_NEW_SESSION = customSessionEnv + 'chrome/new-session'
         this.TOPIC_CONNECTED = `chrome/${channelId}/connected`
         this.TOPIC_REQUEST = `chrome/${channelId}/request`
         this.TOPIC_RESPONSE = `chrome/${channelId}/response`
@@ -79,7 +83,7 @@ export default class RemoteChrome implements Chrome {
 
         const channel = mqtt(url, {
           will: {
-            topic: 'chrome/last-will',
+            topic: customSessionEnv + 'chrome/last-will',
             payload: JSON.stringify({ channelId }),
             qos: 1,
             retain: false,
